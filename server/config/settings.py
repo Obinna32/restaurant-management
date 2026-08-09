@@ -46,7 +46,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'channels',
+
+    #Project Apps
+    'apps.authentication',
 ]
+
+AUTH_USER_MODEL = 'authentication.User'
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
