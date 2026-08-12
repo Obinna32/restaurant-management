@@ -9,7 +9,8 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'role')
 
 class RegisterSerializer(serializers.ModelSerializer):
-    passwword = serializers.CharField(write_only=True, min_length=6)
+    password = serializers.CharField(write_only=True, min_length=6)
+    role = serializers.CharField(required=False, default=UserRole.CUSTOMER)
 
     class Meta:
         model = User
