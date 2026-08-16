@@ -114,7 +114,7 @@ const Menu = () => {
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-xl font-bold text-gray-900">{item.name}</h3>
                     <span className="bg-amber-100 text-amber-800 text-sm font-bold px-3 py-1 rounded-full">
-                      ${parseFloat(item.price).toFixed(2)}
+                      N{parseFloat(item.price).toFixed(2)}
                     </span>
                   </div>
                   <p className="text-gray-600 text-sm line-clamp-2">
