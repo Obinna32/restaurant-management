@@ -45,4 +45,19 @@ class InventoryItem(models.Model):
         return f"{self.name} ({self.quantity} {self.unit})"
     
 
+class StockTransaction(models.Model):
+    TRANSACTION_TYPES = (
+        ('IN', 'Restock / Stock In'),
+        ('OUT', 'Usage / Stock Out'),
+        ('WASTE', 'Wastage / Spoilage'),
+    )
     
+    item = models.ForeignKey(InventoryItem, on_delete=models.CASCADE, related_name='transactions')
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    notes = models.TextField(blank=True, null=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.transaction_type} - {self.item.name} ({self.quantity})"
