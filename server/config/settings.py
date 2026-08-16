@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     #Project Apps
     'apps.authentication',
     'apps.menu',
+    'apps.inventory',
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
