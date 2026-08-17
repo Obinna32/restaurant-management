@@ -1,3 +1,4 @@
+from decimal import Decimal, InvalidOperation
 from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -44,8 +45,8 @@ class InventoryItemViewSet(viewsets.ModelViewSet):
             )
 
         try:
-            qty = float(qty)
-        except ValueError:
+            qty = Decimal(str(qty))
+        except (ValueError, InvalidOperation):
             return Response({'error': 'Quantity must be a valid number.'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Update Inventory Quantity
