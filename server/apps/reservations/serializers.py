@@ -8,7 +8,7 @@ class TableSerializer(serializers.ModelSerializer):
 
 class ReservationSerializer(serializers.ModelSerializer):
     customer_username = serializers.CharField(source='customer.username', read_only=True)
-    table_number = serializers.IntergerField(source='table.table_number', read_only=True, allow_null=True)
+    table_number = serializers.IntegerField(source='table.table_number', read_only=True, allow_null=True)
 
     class Meta:
         model = Reservation
