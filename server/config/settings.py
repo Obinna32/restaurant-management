@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'apps.menu',
     'apps.inventory',
     "apps.reservations",
+    "apps.orders",
 ]
 
 AUTH_USER_MODEL = 'authentication.User'
