@@ -15,7 +15,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.role in [UserRole.ADMIN, UserRole.MANAGER, UserRole.CHEF, UserRole.WAITER]:
+        staff_roles = [UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER]
+        if hasattr(UserRole, 'STAFF'):
+            staff_roles.append(UserRole.STAFF)
+
+        if user.is_staff or user.role in staff_roles:
             queryset = Order.objects.all()
             status_param = self.request.query_params.get('status')
             if status_param:
@@ -29,7 +33,7 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['patch'], permission_classes=[IsStaffOrAdmin])
     def update_status(self, request, pk=None):
-        """Allows Kitchen/Staff to advance order status (PENDING -> PREPARING -> READY -> SERVED -> COMPLETED)."""
+        """Allows Kitchen/Staff to advance order status."""
         order = self.get_object()
         new_status = request.data.get('status')
 
@@ -72,14 +76,15 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if payment.status == 'COMPLETED':
             return Response({'error': 'Payment already processed.'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Access the raw foreign key integer ID directly
+        order_id = payment.order_id
+
         payment.status = 'COMPLETED'
-        payment.transaction_id = f"TXN-{payment.order.id}-99"
+        payment.transaction_id = f"TXN-{order_id}-99"
         payment.save()
 
-        # Mark order completed if paid
-        order = payment.order
-        order.status = 'COMPLETED'
-        order.save()
+        # Update order status in database
+        Order.objects.filter(id=order_id).update(status='COMPLETED')
 
         return Response({
             'message': 'Payment successful.',

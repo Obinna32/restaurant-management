@@ -42,17 +42,26 @@ class IsWaiterOrAdmin(permissions.BasePermission):
         )
 
 
+from rest_framework import permissions
+from .models import UserRole
+
+
 class IsStaffOrAdmin(permissions.BasePermission):
     """
-    Allows access to any staff member (ADMIN, MANAGER, CHEF, WAITER) or superusers.
+    Custom permission to allow access only to staff members.
     """
+
     def has_permission(self, request, view):
-        staff_roles = [UserRole.ADMIN, UserRole.MANAGER, UserRole.CHEF, UserRole.WAITER]
-        return bool(
-            request.user and 
-            request.user.is_authenticated and 
-            (request.user.role in staff_roles or request.user.is_staff or request.user.is_superuser)
-        )
+        if not (request.user and request.user.is_authenticated):
+            return False
+
+        # Access roles via defined attributes or standard staff values
+        allowed_roles = getattr(UserRole, 'STAFF', None)
+        staff_roles = [UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER]
+        if allowed_roles:
+            staff_roles.append(allowed_roles)
+
+        return request.user.role in staff_roles or request.user.is_staff
 
 
 class IsCustomer(permissions.BasePermission):
